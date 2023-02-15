@@ -307,6 +307,39 @@ sudo /etc/init.d/fail2ban restart
 
 Гуй можно настраивать и до fail2ban. Но fail2ban - must have, если у нас "в сеть" торчит 22й порт. В логе авторизации, пока я fail2ban не настроил, простоянно валились сообщения о неправильном юзере и неправильном пароле.
 
+Дополнительные настройки для тюрьмы ssh (файл /etc/fail2ban/jail.local)
+```
+#
+# JAILS
+#
+
+#
+# SSH servers
+#
+
+[sshd]
+
+# To use more aggressive sshd modes set filter parameter "mode" in jail.local:
+# normal (default), ddos, extra or aggressive (combines all).
+# See "tests/files/logs/sshd" or "filter.d/sshd.conf" for usage example and details.
+#mode   = normal
+enabled = true
+port    = ssh
+filter  = sshd
+maxretry = 2
+logpath = %(sshd_log)s
+backend = %(sshd_backend)s
+```
+не забываем рестартовать сервис после редактирования конфигурации
+```
+sudo systemctl restart fail2ban
+sudo systemctl status fail2ban
+```
+и ещё можно проверить, что там уже заблокировано
+```
+fail2ban-client status sshd
+```
+
 ## Шаг 12 - гуй
 Заходим на порт 5000 вашего сервера admin/admin
 
